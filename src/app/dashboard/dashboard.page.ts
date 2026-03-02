@@ -446,7 +446,7 @@ async cargarExcel(event: any) {
  finalizarCotizacion() {
     // 1. TU NÚMERO: Asegúrate de que sean exactamente 11 dígitos (51 + tu número)
     // He puesto el número que aparece en tu captura: 51912816093
-    const telefonoAdmin = "51912816093"; 
+    const telefonoAdmin = "51908885683"; 
 
     // 2. CONSTRUCCIÓN DEL MENSAJE: Usamos \n para saltos de línea
     let mensaje = "*NUEVO PEDIDO - TOTAL TOOLS PERÚ*\n\n";
