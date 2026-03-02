@@ -431,42 +431,4 @@ async cargarExcel(event: any) {
     });
     await alert.present();
   }
-
-  // --- NUEVAS FUNCIONES PARA EL CARRITO / COTIZACIÓN ---
-
-  /**
-   * Genera un reporte PDF simple (Simulación inicial)
-   */
-  exportarPDF() {
-    this.mostrarMensaje('Generando reporte PDF...', 'primary');
-    console.log('Iniciando exportación de PDF con el inventario actual:', this.fullInventory);
-    // Nota: Aquí podrás integrar jspdf más adelante para crear el archivo real.
   }
-
- finalizarCotizacion() {
-    // 1. TU NÚMERO: Asegúrate de que sean exactamente 11 dígitos (51 + tu número)
-    // He puesto el número que aparece en tu captura: 51912816093
-    const telefonoAdmin = "51908885683"; 
-
-    // 2. CONSTRUCCIÓN DEL MENSAJE: Usamos \n para saltos de línea
-    let mensaje = "*NUEVO PEDIDO - TOTAL TOOLS PERÚ*\n\n";
-    mensaje += "Hola, me interesa realizar una cotización.\n";
-    mensaje += "----------------------------------\n";
-    
-    // Aquí puedes añadir más lógica si tienes una variable de 'carrito'
-    // Por ahora enviamos un mensaje general limpio
-    mensaje += "Favor de contactarme para coordinar los detalles.";
-
-    // 3. CODIFICACIÓN SEGURA: Esto elimina los símbolos extraños (rombos con ?)
-    const mensajeFinal = encodeURIComponent(mensaje);
-
-    // 4. URL UNIVERSAL: Usamos el formato api.whatsapp para mayor compatibilidad en móviles
-    const url = `https://api.whatsapp.com/send?phone=${telefonoAdmin}&text=${mensajeFinal}`;
-
-    // 5. EJECUCIÓN: Abrir WhatsApp
-    window.open(url, '_system'); // '_system' ayuda a que en celulares abra la APP directamente
-    
-    this.mostrarMensaje('Conectando con WhatsApp...', 'success');
-  }
-
-} // Cierre de la clase DashboardPage

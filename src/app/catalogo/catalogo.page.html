@@ -38,11 +38,7 @@
       <h3>COTIZA TU <br><span class="cyan-text">EQUIPO</span></h3>
       <p style="color: white; font-size: 10px; margin-top: 5px; opacity: 0.8;">CALIDAD PROFESIONAL</p>
     </div>
-    <img 
-      src="https://images.unsplash.com/photo-1504148455328-c376907d081c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-      class="promo-img" 
-      alt="Total Tools"
-    >
+    <img src="https://images.unsplash.com/photo-1504148455328-c376907d081c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="promo-img" alt="Total Tools">
   </div>
 
   <div class="section-header ion-padding-horizontal" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -64,30 +60,24 @@
     <ion-row>
       <ion-col size="6" size-md="4" *ngFor="let p of filteredProducts" style="padding: 8px;">
         <div class="modern-card animate__animated animate__fadeInUp">
-          
           <div class="floating-badge" [class.no-stock]="p.stock < 1">
             <ion-icon [name]="p.stock > 0 ? 'cube-outline' : 'alert-circle-outline'"></ion-icon>
             <span>{{ p.stock > 0 ? p.stock : 'Agotado' }}</span>
           </div>
-
           <div class="card-image-wrapper">
             <img [src]="p.image || 'https://via.placeholder.com/300?text=Sin+Imagen'" alt="{{ p.name }}">
           </div>
-
           <div class="card-content">
             <div class="sku-tag">
               <ion-icon name="barcode-outline" style="font-size: 10px; margin-right: 3px;"></ion-icon>
               {{ p.code || 'SIN SKU' }}
             </div>
-            
             <h3 class="product-title">{{ p.name }}</h3>
-            
             <div class="action-footer">
               <div class="price-group">
                 <span class="currency">S/.</span>
                 <span class="amount">{{ p.price.toFixed(2) }}</span>
               </div>
-              
               <ion-button class="add-btn-circle" [disabled]="p.stock < 1" (click)="addToQuote(p)">
                 <ion-icon name="add" slot="icon-only"></ion-icon>
               </ion-button>
@@ -100,9 +90,9 @@
 
   <ion-modal [isOpen]="isModalOpen" (didDismiss)="setOpen(false)" class="cart-modal"> 
     <ng-template>
-      <div class="modal-wrapper">
+      <div class="modal-wrapper" style="display: flex; flex-direction: column; height: 100%;">
         
-        <header class="cart-header">
+        <header class="cart-header" style="flex-shrink: 0;">
           <div class="header-info">
             <h2>Mi Pedido <span style="color:#00a8cc">TOTAL</span></h2>
             <p>{{ totalItemsInCart }} unidades en lista</p>
@@ -112,18 +102,16 @@
           </button>
         </header>
 
-        <main class="cart-content">
+        <main class="cart-content" style="flex-grow: 1; display: flex; flex-direction: column; overflow: hidden;">
           
           <div *ngIf="quoteCart.length === 0" class="empty-cart-container animate__animated animate__fadeIn">
-            <div class="icon-bg">
-              <ion-icon name="cart-outline"></ion-icon>
-            </div>
+            <div class="icon-bg"><ion-icon name="cart-outline"></ion-icon></div>
             <h3>Tu lista está vacía</h3>
             <p>Agrega productos para generar tu cotización personalizada.</p>
             <button class="btn-back" (click)="setOpen(false)">EXPLORAR TIENDA</button>
           </div>
 
-          <div class="client-section animate__animated animate__fadeIn" *ngIf="quoteCart.length > 0">
+          <div class="client-section animate__animated animate__fadeIn" *ngIf="quoteCart.length > 0" style="flex-shrink: 0; padding: 10px 15px; background: #fdfdfd;">
             <div class="input-modern">
               <ion-icon name="person-circle-outline"></ion-icon>
               <input type="text" [(ngModel)]="datosCliente.nombre" placeholder="Nombre / Razón Social">
@@ -134,7 +122,7 @@
             </div>
           </div>
 
-          <div class="cart-list" *ngIf="quoteCart.length > 0">
+          <div class="cart-list" *ngIf="quoteCart.length > 0" style="flex-grow: 1; overflow-y: auto; padding: 10px 15px;">
             <div class="cart-item-row animate__animated animate__fadeInRight" *ngFor="let item of quoteCart">
               <div class="item-image">
                 <img [src]="item.product.image" onError="this.src='https://via.placeholder.com/80?text=Tool'">
@@ -162,7 +150,7 @@
           </div>
         </main>
 
-        <footer class="cart-footer-modern" *ngIf="quoteCart.length > 0">
+        <footer class="cart-footer-modern" *ngIf="quoteCart.length > 0" style="flex-shrink: 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.08);">
           <div class="summary-row">
             <span>Inversión Total</span>
             <strong class="total-amount">{{ formatoPrecio(totalQuoteAmount) }}</strong>
@@ -173,14 +161,13 @@
               <ion-icon name="download-outline"></ion-icon>
               <span>Descargar PDF</span>
             </button>
-            <button class="action-btn primary" 
-                    (click)="enviarWhatsApp()" 
-                    [disabled]="!datosCliente.nombre">
+            <button class="action-btn primary" (click)="enviarWhatsApp()" [disabled]="!datosCliente.nombre">
               <ion-icon name="logo-whatsapp"></ion-icon>
               <span>Finalizar Cotización</span>
             </button>
           </div>
         </footer>
+
       </div>
     </ng-template>
   </ion-modal>

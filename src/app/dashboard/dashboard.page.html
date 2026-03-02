@@ -224,17 +224,8 @@
               </ion-button>
             </ng-container>
           </div>
-        </div>
-      </div>
 
-      <div class="cart-footer-mobile" *ngIf="!esAdministrador" 
-        style="position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; gap: 10px; box-shadow: 0 -4px 10px rgba(0,0,0,0.1); z-index: 1000; padding-bottom: calc(15px + env(safe-area-inset-bottom));">
-        <ion-button expand="block" color="secondary" style="flex: 1; margin: 0;" (click)="exportarPDF()">
-          <ion-icon name="download-outline" slot="start"></ion-icon> PDF
-        </ion-button>
-        <ion-button expand="block" color="success" style="flex: 2; margin: 0;" (click)="finalizarCotizacion()">
-          FINALIZAR COTIZACIÓN
-        </ion-button>
+        </div>
       </div>
     </div>
   </div>

@@ -9,7 +9,7 @@ import {
   IonModal, IonList, IonItem, IonLabel, IonAvatar, IonFooter,
   IonChip, ToastController, IonInput, IonThumbnail, 
   IonCardHeader, IonCardTitle, IonCardSubtitle, IonSpinner,
-  AlertController, LoadingController // Agregados para gestión de borrado
+  AlertController, LoadingController 
 } from '@ionic/angular/standalone';
 import { TiendaService, Product } from '../services/tienda.service';
 import { addIcons } from 'ionicons';
@@ -20,7 +20,7 @@ import {
   informationCircleOutline, hammerOutline, closeCircle, add, 
   addOutline, removeOutline, download, cubeOutline, alertCircleOutline,
   personCircleOutline, downloadOutline, personOutline, cardOutline, receiptOutline,
-  close, trashBinOutline, cloudUploadOutline // Nuevos iconos para borrar y subir
+  close, trashBinOutline, cloudUploadOutline 
 } from 'ionicons/icons';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
@@ -50,13 +50,13 @@ export class CatalogoPage implements OnInit {
   allProducts: any[] = [];
   filteredProducts: any[] = []; 
   searchTerm: string = '';
-  isAdmin: boolean = true; // Cambiar según tu lógica de sesión
+  isAdmin: boolean = true; 
   
   categories = ['Todo', 'Taladros', 'Sierras', 'Amoladoras', 'Kits', 'Accesorios'];
   selectedCategory = 'Todo';
   quoteCart: QuoteItem[] = [];
   isModalOpen = false;
-  phoneNumber = '51912816093'; 
+  phoneNumber = '51908885683'; 
 
   totalItemsInCart: number = 0;
   totalQuoteAmount: number = 0; 
@@ -171,7 +171,8 @@ export class CatalogoPage implements OnInit {
   formatoPrecio(precio: number): string {
     return `S/. ${precio.toFixed(2)}`;
   }
-  // --- EXPORTACIÓN Y VENTA ---
+
+  // --- EXPORTACIÓN Y VENTA (MODIFICADO) ---
 
   async generarPDF() {
     if (this.quoteCart.length === 0) return;
@@ -192,11 +193,10 @@ export class CatalogoPage implements OnInit {
 
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      doc.text(`nombre del cliente: ${this.datosCliente.nombre || '---'}`, 14, 35);
-      doc.text(`Número de pedido de venta: QT-${Math.floor(Math.random() * 1000000)}`, 120, 35);
-      doc.text(`Teléfono del cliente: ---`, 14, 42); 
+      doc.text(`Nombre del cliente: ${this.datosCliente.nombre || '---'}`, 14, 35);
+      doc.text(`Número de pedido: QT-${Math.floor(Math.random() * 1000000)}`, 120, 35);
+      doc.text(`Documento: ${this.datosCliente.documento || '---'}`, 14, 42); 
       doc.text(`Fecha de pedido: ${fechaActual}`, 120, 42);
-      doc.text(`Observación:`, 14, 49);
 
       const tableRows = this.quoteCart.map((item, index) => [
         index + 1,
@@ -211,98 +211,107 @@ export class CatalogoPage implements OnInit {
 
       autoTable(doc, {
         startY: 55,
-        head: [['#', 'Número de Articulo', 'nombre del producto', 'SC', 'Cantidad', 'SC', 'Precio por unidad', 'Total Parcial']],
+        head: [['#', 'Código', 'Producto', 'SC', 'Cant.', 'SC', 'P. Unit', 'Total']],
         body: tableRows,
         theme: 'grid',
         styles: { fontSize: 7, halign: 'center', cellPadding: 1 },
-        headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineWidth: 0.1 },
-        columnStyles: {
-          2: { halign: 'left', cellWidth: 60 }
-        }
+        headStyles: { fillColor: [0, 168, 204], textColor: [255, 255, 255] },
+        columnStyles: { 2: { halign: 'left', cellWidth: 60 } }
       });
-
-      let finalY = (doc as any).lastAutoTable.finalY + 10;
-
-      doc.setFontSize(8);
-      doc.text('(PT)LESS:', 14, finalY);
-      doc.text(`Peso (kg): ---  Volumen (M³): ---`, 14, finalY + 5);
-
-      const rightColX = 140;
-      doc.text(`Cantidad total de ventas: ${this.totalQuoteAmount.toFixed(2)}`, rightColX, finalY);
-      doc.text(`Monto de la deducción: 0.00`, rightColX, finalY + 5);
-      doc.text(`Monto con descuento: ${this.totalQuoteAmount.toFixed(2)}`, rightColX, finalY + 10);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`Importe (impuestos incluidos): ${this.totalQuoteAmount.toFixed(2)}`, rightColX, finalY + 15);
-
-      finalY += 30;
-      doc.rect(14, finalY, 30, 15);
-      doc.text('Creador', 16, finalY + 5);
-      doc.text('Gonzalo Ticona', 16, finalY + 12); 
-
-      doc.text('CHECKER: _________________________', 14, finalY + 25);
 
       doc.save(`Cotizacion_${this.datosCliente.nombre || 'Cliente'}.pdf`);
     } catch (error) {
-      console.error(error);
-      this.mostrarMensaje('Error al generar el formato PDF', 'danger');
+      this.mostrarMensaje('Error al generar PDF', 'danger');
     }
   }
 
-  async downloadExcel() {
-    if (this.quoteCart.length === 0) return;
-
+  // FUNCIÓN AUXILIAR PARA GENERAR EXCEL
+  private generarExcelArchivo() {
     const dataToExport = this.quoteCart.map(item => ({
-      'SKU': item.product.code,
-      'HERRAMIENTA': item.product.name,
+      'CODIGO/SKU': item.product.code,
+      'DESCRIPCION': item.product.name,
       'CANTIDAD': item.quantity,
       'PRECIO UNIT.': item.product.price, 
-      'TOTAL': item.product.price * item.quantity 
+      'TOTAL PARCIAL': item.product.price * item.quantity 
     }));
 
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Pedido');
-    XLSX.writeFile(wb, `Pedido_TotalTools_${new Date().getTime()}.xlsx`);
+    
+    const fecha = new Date().toLocaleDateString().replace(/\//g, '-');
+    const nombreDoc = `Pedido_${this.datosCliente.nombre.replace(/\s+/g, '_') || 'Cliente'}_${fecha}.xlsx`;
+    
+    XLSX.writeFile(wb, nombreDoc);
+  }
+
+  async downloadExcel() {
+    if (this.quoteCart.length === 0) return;
+    this.generarExcelArchivo();
     this.mostrarMensaje('Excel descargado con éxito', 'success');
   }
 
-  async enviarWhatsApp() {
+async enviarWhatsApp() {
     if (this.quoteCart.length === 0) {
       this.mostrarMensaje('El carrito está vacío', 'warning');
       return;
     }
 
+    if (!this.datosCliente.nombre) {
+      this.mostrarMensaje('Ingresa el nombre del cliente', 'warning');
+      return;
+    }
+
+    const loading = await this.loadingController.create({
+      message: 'Generando pedido...',
+      duration: 2000
+    });
+    await loading.present();
+
     try {
+      // 1. GENERAR EXCEL PRIMERO
+      this.generarExcelArchivo();
+
+      // 2. ACTUALIZAR STOCK
       for (const item of this.quoteCart) {
         const stockAnterior = item.product.stock;
         const nuevoStock = stockAnterior - item.quantity;
         await this.tiendaService.updateStock(item.product.id!, nuevoStock, item.product.name, stockAnterior);
       }
 
+      // 3. CONSTRUIR MENSAJE
       let mensaje = `*NUEVO PEDIDO - TOTAL TOOLS PERÚ*\n\n`;
-      mensaje += `👤 *Cliente:* ${this.datosCliente.nombre || 'No indicado'}\n`;
-      mensaje += `🆔 *DNI/RUC:* ${this.datosCliente.documento || 'No indicado'}\n`;
+      mensaje += `👤 *Cliente:* ${this.datosCliente.nombre}\n`;
       mensaje += `------------------------------------------\n`;
-      
+      mensaje += `📂 _He adjuntado el archivo Excel del pedido_\n`;
+      mensaje += `------------------------------------------\n`;
       this.quoteCart.forEach(item => {
-        mensaje += `• ${item.quantity}x ${item.product.name} [${item.product.code}]\n`;
+        mensaje += `• ${item.quantity}x ${item.product.name}\n`;
       });
+      mensaje += `\n💰 *TOTAL: S/ ${this.totalQuoteAmount.toFixed(2)}*`;
 
-      mensaje += `------------------------------------------\n`;
-      mensaje += `💰 *TOTAL A PAGAR: S/ ${this.totalQuoteAmount.toFixed(2)}*\n\n`;
-      mensaje += `🚀 _Enviado desde el Catálogo Digital_`;
+      // 4. EL TRUCO PARA MÓVILES: 
+      // Usamos un pequeño delay (setTimeout) para que el navegador 
+      // procese la descarga antes de intentar abrir WhatsApp.
+      setTimeout(() => {
+        const url = `whatsapp://send?phone=${this.phoneNumber}&text=${encodeURIComponent(mensaje)}`;
+        
+        // Intentamos abrir con esquema de App primero (whatsapp://) 
+        // y si falla, usamos el enlace web (https://wa.me)
+        window.location.href = url;
 
-      const url = `https://wa.me/${this.phoneNumber}?text=${encodeURIComponent(mensaje)}`;
-      window.open(url, '_blank');
-      
-      this.quoteCart = []; 
-      this.datosCliente = { nombre: '', documento: '' };
-      this.calculateQuoteTotal();
-      this.setOpen(false);
-      this.mostrarMensaje('Pedido enviado y stock actualizado', 'success');
+        // Limpieza después del envío
+        this.quoteCart = []; 
+        this.datosCliente = { nombre: '', documento: '' };
+        this.calculateQuoteTotal();
+        this.setOpen(false);
+        loading.dismiss();
+        this.mostrarMensaje('Excel descargado. Ahora adjúntalo en WhatsApp.', 'success');
+      }, 800);
 
     } catch (error) {
-      this.mostrarMensaje('Error al procesar el envío', 'danger');
+      loading.dismiss();
+      this.mostrarMensaje('Error al procesar el pedido', 'danger');
     }
   }
 
