@@ -13,7 +13,7 @@ import {
   cashOutline, cubeOutline, pricetagOutline, addCircle, removeCircle, 
   trashOutline, alertCircleOutline, searchOutline, statsChartOutline, 
   closeCircle, timeOutline, cloudUploadOutline, lockClosedOutline, lockOpenOutline,
-  lockClosed, scanOutline, shieldCheckmarkOutline, gridOutline, layersOutline, mapOutline, listOutline, cameraOutline, pencilOutline, checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
+  lockClosed, scanOutline, shieldCheckmarkOutline, gridOutline, layersOutline, mapOutline, listOutline, cameraOutline, pencilOutline, checkmarkCircleOutline, closeCircleOutline, downloadOutline } from 'ionicons/icons';
 import { TiendaService, Product } from '../services/tienda.service';
 import * as XLSX from 'xlsx';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -58,6 +58,7 @@ export class DashboardPage implements OnInit {
   // Estadísticas
   totalValue: number = 0;
   lowStockCount: number = 0;
+  totalItemsCount: number = 0; // <--- AGREGADO: Para el conteo total de existencias
 
   // Scanner
   mostrarCamara: boolean = false;
@@ -69,7 +70,7 @@ export class DashboardPage implements OnInit {
   private alertController = inject(AlertController);
 
   constructor() {
-    addIcons({statsChartOutline,cloudUploadOutline,timeOutline,logOutOutline,closeCircle,cubeOutline,cashOutline,alertCircleOutline,barcodeOutline,scanOutline,pricetagOutline,gridOutline,layersOutline,imageOutline,addCircle,trashOutline,searchOutline,cameraOutline,pencilOutline,checkmarkCircleOutline,closeCircleOutline,lockClosedOutline,shieldCheckmarkOutline,listOutline,mapOutline,saveOutline,hammerOutline,removeCircle,lockOpenOutline,lockClosed});
+    addIcons({statsChartOutline,cloudUploadOutline,timeOutline,logOutOutline,closeCircle,cubeOutline,cashOutline,alertCircleOutline,barcodeOutline,scanOutline,pricetagOutline,gridOutline,layersOutline,imageOutline,addCircle,trashOutline,searchOutline,cameraOutline,pencilOutline,checkmarkCircleOutline,closeCircleOutline,downloadOutline,lockClosedOutline,shieldCheckmarkOutline,listOutline,mapOutline,saveOutline,hammerOutline,removeCircle,lockOpenOutline,lockClosed});
   }
 
   ngOnInit() {
@@ -159,11 +160,9 @@ async cargarExcel(event: any) {
       const workbook = XLSX.read(data, { type: 'array' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       
-      // Convertimos a JSON asegurando que lea los datos tal cual
       const jsonData = XLSX.utils.sheet_to_json(worksheet) as any[];
 
       for (const fila of jsonData) {
-        // Función para buscar la columna correcta sin importar espacios o mayúsculas
         const getVal = (targets: string[]) => {
           const key = Object.keys(fila).find(k => 
             targets.includes(k.toUpperCase().trim().replace(/\s/g, ''))
@@ -171,7 +170,6 @@ async cargarExcel(event: any) {
           return key ? fila[key] : null;
         };
 
-        // Función para limpiar y forzar el número (quita S/., comas, espacios)
         const aNumero = (val: any) => {
           if (val === null || val === undefined) return 0;
           const limpio = String(val).replace(/[^0-9.]/g, '');
@@ -190,7 +188,6 @@ async cargarExcel(event: any) {
           fila: String(getVal(['FILA', 'ROW', 'NIVEL']) || '').trim()
         };
 
-        // Solo subir si hay un nombre de producto válido
         if (prod.name && prod.name !== 'undefined' && prod.name !== '') {
           await this.tiendaService.addProduct(prod);
         }
@@ -202,11 +199,12 @@ async cargarExcel(event: any) {
       this.mostrarMensaje('Error al leer el Excel. Verifica el formato.', 'danger');
     } finally {
       loading.dismiss();
-      event.target.value = ''; // Reset para poder subir el mismo archivo si se corrige
+      event.target.value = ''; 
     }
   };
   reader.readAsArrayBuffer(file);
 }
+
   filterInventory() {
     const query = this.searchTerm.toLowerCase();
     if (!query) {
@@ -218,9 +216,22 @@ async cargarExcel(event: any) {
     }
   }
 
+  // --- ESTADÍSTICAS REFORZADAS ---
   calculateStats() {
-    this.totalValue = this.fullInventory.reduce((acc, curr) => acc + (Number(curr.price) * Number(curr.stock)), 0);
-    this.lowStockCount = this.fullInventory.filter(p => p.stock < 5).length;
+    // 1. Conteo total de existencias (unidades físicas)
+    this.totalItemsCount = this.fullInventory.reduce((acc, curr) => {
+      return acc + (Number(curr.stock) || 0);
+    }, 0);
+
+    // 2. Valor monetario total
+    this.totalValue = this.fullInventory.reduce((acc, curr) => {
+      const p = Number(curr.price) || 0;
+      const s = Number(curr.stock) || 0;
+      return acc + (p * s);
+    }, 0);
+
+    // 3. Bajo stock
+    this.lowStockCount = this.fullInventory.filter(p => (Number(p.stock) || 0) < 5).length;
   }
 
   async saveProduct() {
@@ -359,12 +370,9 @@ async cargarExcel(event: any) {
     await toast.present();
   }
 
-  // --- LÓGICA PARA ORGANIZAR EL MAPA ---
   getProductsByShelf(shelf: string) {
     return this.fullInventory.filter(p => p.estante === shelf);
   }
-
-  // --- NUEVAS FUNCIONES DE EDICIÓN RÁPIDA (PASO 2) ---
 
   activarEdicion(product: Product) {
     this.editId = product.id!;
@@ -372,7 +380,6 @@ async cargarExcel(event: any) {
 
   cancelarEdicion() {
     this.editId = null;
-    // Recargamos el inventario para asegurar que los datos locales vuelvan a su estado original
     this.filterInventory();
   }
 
@@ -383,7 +390,6 @@ async cargarExcel(event: any) {
     await loading.present();
 
     try {
-      // Usamos el servicio para actualizar solo los campos necesarios
       await this.tiendaService.updateProductFields(product.id, {
         estante: product.estante || '',
         fila: product.fila || '',
@@ -398,6 +404,8 @@ async cargarExcel(event: any) {
       loading.dismiss();
     }
   }
+
+ // ... (Todo tu código de importaciones y variables permanece igual)
 
   async editImage(product: Product) {
     const alert = await this.alertController.create({
@@ -423,4 +431,42 @@ async cargarExcel(event: any) {
     });
     await alert.present();
   }
-}
+
+  // --- NUEVAS FUNCIONES PARA EL CARRITO / COTIZACIÓN ---
+
+  /**
+   * Genera un reporte PDF simple (Simulación inicial)
+   */
+  exportarPDF() {
+    this.mostrarMensaje('Generando reporte PDF...', 'primary');
+    console.log('Iniciando exportación de PDF con el inventario actual:', this.fullInventory);
+    // Nota: Aquí podrás integrar jspdf más adelante para crear el archivo real.
+  }
+
+ finalizarCotizacion() {
+    // 1. TU NÚMERO: Asegúrate de que sean exactamente 11 dígitos (51 + tu número)
+    // He puesto el número que aparece en tu captura: 51912816093
+    const telefonoAdmin = "51912816093"; 
+
+    // 2. CONSTRUCCIÓN DEL MENSAJE: Usamos \n para saltos de línea
+    let mensaje = "*NUEVO PEDIDO - TOTAL TOOLS PERÚ*\n\n";
+    mensaje += "Hola, me interesa realizar una cotización.\n";
+    mensaje += "----------------------------------\n";
+    
+    // Aquí puedes añadir más lógica si tienes una variable de 'carrito'
+    // Por ahora enviamos un mensaje general limpio
+    mensaje += "Favor de contactarme para coordinar los detalles.";
+
+    // 3. CODIFICACIÓN SEGURA: Esto elimina los símbolos extraños (rombos con ?)
+    const mensajeFinal = encodeURIComponent(mensaje);
+
+    // 4. URL UNIVERSAL: Usamos el formato api.whatsapp para mayor compatibilidad en móviles
+    const url = `https://api.whatsapp.com/send?phone=${telefonoAdmin}&text=${mensajeFinal}`;
+
+    // 5. EJECUCIÓN: Abrir WhatsApp
+    window.open(url, '_system'); // '_system' ayuda a que en celulares abra la APP directamente
+    
+    this.mostrarMensaje('Conectando con WhatsApp...', 'success');
+  }
+
+} // Cierre de la clase DashboardPage

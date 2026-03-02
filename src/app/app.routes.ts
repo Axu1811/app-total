@@ -13,17 +13,17 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard.page').then(m => m.DashboardPage),
-    canActivate: [authGuard] // Protegemos el dashboard
+    // ELIMINADO: canActivate para que el catálogo cargue directo en el celular
   },
   {
     path: 'catalogo',
     loadComponent: () => import('./catalogo/catalogo.page').then(m => m.CatalogoPage),
-    canActivate: [authGuard]
+    // ELIMINADO: canActivate para acceso libre al stock
   },
   {
     path: 'history',
     loadComponent: () => import('./history/history.page').then(m => m.HistoryPage),
-    canActivate: [authGuard]
+    canActivate: [authGuard] // Mantenemos protegido el historial de cambios
   },
   {
     path: 'login',
@@ -41,12 +41,11 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'welcome',
+    redirectTo: 'dashboard', // CAMBIADO: Ahora la app abre directo en el inventario
     pathMatch: 'full',
   },
   {
-    path: 'mapa-almacen', // Esta es la "puerta" para el personal
+    path: 'mapa-almacen',
     loadComponent: () => import('./pages/mapa-almacen/mapa.page').then( m => m.MapaPage)
-    // Nota: No lleva canActivate[authGuard] para que entren con el PIN de 4 dígitos
   },
 ];

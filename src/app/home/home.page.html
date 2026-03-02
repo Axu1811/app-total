@@ -1,52 +1,103 @@
 <ion-content [fullscreen]="true" class="ion-padding login-background">
+
   <div class="login-container">
-    
+
+   
+
     <div class="brand-header animate__animated animate__fadeInDown">
+
       <div class="logo-circle">
+
         <ion-icon name="person-circle-outline"></ion-icon>
+
       </div>
+
       <h1 class="brand-title">ACCESO<br><span>ADMINISTRADOR</span></h1>
+
       <p class="brand-subtitle">Gestión de Inventario</p>
+
     </div>
+
+
 
     <div class="login-card animate__animated animate__fadeInUp">
-      
-      <div class="input-group">
-        <ion-item lines="none" class="custom-input">
-          <ion-icon slot="start" name="mail-outline" color="medium"></ion-icon>
-          <ion-input [(ngModel)]="emailValue" type="email" placeholder="Correo Admin"></ion-input>
-        </ion-item>
-      </div>
+
+     
 
       <div class="input-group">
+
         <ion-item lines="none" class="custom-input">
-          <ion-icon slot="start" name="lock-closed-outline" color="medium"></ion-icon>
-          <ion-input [(ngModel)]="passValue" [type]="passwordType" placeholder="Contraseña"></ion-input>
-          <ion-icon slot="end" [name]="passwordIcon" (click)="togglePassword()" class="eye-icon"></ion-icon>
+
+          <ion-icon slot="start" name="mail-outline" color="medium"></ion-icon>
+
+          <ion-input [(ngModel)]="emailValue" type="email" placeholder="Correo Admin"></ion-input>
+
         </ion-item>
+
       </div>
+
+
+
+      <div class="input-group">
+
+        <ion-item lines="none" class="custom-input">
+
+          <ion-icon slot="start" name="lock-closed-outline" color="medium"></ion-icon>
+
+          <ion-input [(ngModel)]="passValue" [type]="passwordType" placeholder="Contraseña"></ion-input>
+
+          <ion-icon slot="end" [name]="passwordIcon" (click)="togglePassword()" class="eye-icon"></ion-icon>
+
+        </ion-item>
+
+      </div>
+
+
 
       <ion-button expand="block" class="login-btn" (click)="login()">
+
         INGRESAR AL SISTEMA
+
         <ion-icon slot="end" name="arrow-forward-circle-outline"></ion-icon>
+
       </ion-button>
+
+
 
       <div class="ion-text-center ion-margin-vertical">
+
         <p style="color: #666; font-size: 0.7em; letter-spacing: 1px;">O ACCESO PERSONAL</p>
+
       </div>
+
+
 
       <ion-button expand="block" fill="outline" color="secondary" class="warehouse-btn" (click)="accederAlMapa()">
+
         <ion-icon slot="start" name="map-outline"></ion-icon>
+
         CONSULTAR UBICACIONES
+
       </ion-button>
 
+
+
       <div class="back-link">
+
         <a routerLink="/welcome">
+
           <ion-icon name="arrow-undo-outline"></ion-icon> Volver al Inicio
+
         </a>
+
       </div>
+
+
 
     </div>
 
+
+
   </div>
+
 </ion-content>
