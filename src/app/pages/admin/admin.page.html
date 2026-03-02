@@ -1,0 +1,123 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-button routerLink="/welcome">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Panel Admin - Total Tools</ion-title>
+    
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" color="danger">
+        <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-card class="animate__animated animate__fadeIn" style="border: 2px dashed #1D6F42;">
+    <ion-card-header>
+      <ion-card-title color="success">Carga Masiva de Productos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-row>
+        <ion-col size="6">
+          <ion-button expand="block" fill="outline" color="success" (click)="descargarPlantilla()">
+            <ion-icon name="download-outline" slot="start"></ion-icon>
+            PLANTILLA
+          </ion-button>
+        </ion-col>
+        <ion-col size="6">
+          <ion-button expand="block" color="success" (click)="fileInput.click()">
+            <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+            SUBIR EXCEL
+          </ion-button>
+          <input #fileInput type="file" (change)="subirExcel($event)" accept=".xlsx, .xls" style="display:none" />
+        </ion-col>
+      </ion-row>
+      <p style="font-size: 11px; color: #666; margin-top: 10px;" class="ion-text-center">
+        Descarga el modelo, llena los datos y súbelo para actualizar el catálogo al instante.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="animate__animated animate__fadeIn">
+    <ion-card-header>
+      <ion-card-title>Registrar Nueva Herramienta</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item class="custom-input-admin">
+          <ion-label position="stacked">Código (SKU)</ion-label>
+          <ion-input [(ngModel)]="newProduct.code" placeholder="Ej: TTT1001"></ion-input>
+        </ion-item>
+        
+        <ion-item class="custom-input-admin">
+          <ion-label position="stacked">Nombre del Producto</ion-label>
+          <ion-input [(ngModel)]="newProduct.name" placeholder="Ej: Taladro Percutor"></ion-input>
+        </ion-item>
+
+        <ion-item class="custom-input-admin">
+          <ion-label position="stacked">Precio (S/.)</ion-label>
+          <ion-input type="number" [(ngModel)]="newProduct.price" placeholder="0.00"></ion-input>
+        </ion-item>
+
+        <ion-item class="custom-input-admin">
+          <ion-label position="stacked">Stock Inicial</ion-label>
+          <ion-input type="number" [(ngModel)]="newProduct.stock" placeholder="0"></ion-input>
+        </ion-item>
+
+        <ion-item class="custom-input-admin">
+          <ion-label position="stacked">URL de la Imagen (Link Directo)</ion-label>
+          <ion-input type="text" [(ngModel)]="newProduct.image" placeholder="https://i.postimg.cc/foto.jpg"></ion-input>
+          <ion-icon name="link-outline" slot="start" color="primary"></ion-icon>
+        </ion-item>
+      </ion-list>
+
+      <div class="preview-box ion-text-center" *ngIf="newProduct.image">
+        <p>Vista previa:</p>
+        <img [src]="newProduct.image" (error)="newProduct.image = ''" style="max-height: 100px; border-radius: 8px;" />
+      </div>
+
+      <ion-button expand="block" (click)="saveProduct()" class="ion-margin-top btn-save">
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        GUARDAR E INGRESAR
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <h2 class="ion-padding-horizontal section-title">Inventario Actual</h2>
+
+  <ion-list lines="full" class="inventory-list">
+    <ion-item *ngFor="let p of allProducts" class="animate__animated animate__fadeIn">
+      <ion-thumbnail slot="start" class="admin-thumb">
+        <img [src]="p.image || 'https://via.placeholder.com/150?text=No+Foto'" />
+      </ion-thumbnail>
+      
+      <ion-label>
+        <h3 class="product-name">{{ p.name }}</h3>
+        <p class="product-sku">SKU: {{ p.code }}</p>
+        <p class="product-stock">
+          <strong>Stock: <span [class.out]="p.stock < 1">{{ p.stock }} u.</span></strong>
+        </p>
+      </ion-label>
+
+      <div slot="end" class="admin-controls">
+        <ion-button fill="clear" color="danger" (click)="updateProductStock(p, -1)">
+          <ion-icon name="remove-circle-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        
+        <ion-button fill="clear" color="success" (click)="updateProductStock(p, 1)">
+          <ion-icon name="add-circle-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+
+        <ion-button fill="clear" color="medium" (click)="deleteProduct(p)">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-item>
+  </ion-list>
+</ion-content>

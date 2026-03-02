@@ -1,0 +1,49 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar style="--background: #202020; color: white;">
+    <ion-buttons slot="start">
+      <ion-button routerLink="/welcome" color="light">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>LOCALIZADOR DE <strong>STOCK</strong></ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar style="--background: #202020; padding: 0 10px 10px 10px;">
+    <div class="search-box">
+      <ion-icon name="search-outline"></ion-icon>
+      <input type="text" placeholder="Buscar herramienta o código..." [(ngModel)]="searchTerm" (input)="filterItems()">
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content style="--background: #f4f7f6;">
+  <div class="helper-text ion-padding">
+    <p><ion-icon name="map-outline"></ion-icon> Organizado por Estante y Fila</p>
+  </div>
+
+  <div class="shelf-container">
+    <div class="shelf-card" *ngFor="let shelf of estantes">
+      <div class="shelf-header">
+        <ion-icon name="grid-outline"></ion-icon>
+        <span>ESTANTE {{ shelf }}</span>
+      </div>
+
+      <div class="shelf-body">
+        <div class="product-loc-row" *ngFor="let p of getProductsByShelf(shelf)">
+          <div class="loc-badge">Fila {{ p.fila || '-' }}</div>
+          <div class="product-details">
+            <span class="p-name">{{ p.name }}</span>
+            <span class="p-code"><ion-icon name="barcode-outline"></ion-icon> {{ p.code }}</span>
+          </div>
+          <div class="stock-pill" [class.low]="p.stock < 5">
+            {{ p.stock }} <small>unid.</small>
+          </div>
+        </div>
+
+        <div *ngIf="getProductsByShelf(shelf).length === 0" class="empty-state">
+          Sin productos en este estante
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

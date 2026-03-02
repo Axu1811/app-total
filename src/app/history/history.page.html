@@ -1,0 +1,51 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="header-toolbar">
+    <ion-buttons slot="start">
+      <ion-button routerLink="/dashboard" color="light">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Bitácora de Cambios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-history">
+  
+  <div class="history-container animate__animated animate__fadeIn">
+    
+    <div class="timeline-header">
+      <p>Últimos movimientos registrados en el sistema.</p>
+    </div>
+
+    <ion-list class="log-list">
+      
+      <div *ngIf="logs.length === 0" class="empty-logs">
+        <ion-icon name="time-outline"></ion-icon>
+        <p>No hay actividad reciente</p>
+      </div>
+
+      <ion-item *ngFor="let log of logs" lines="none" class="log-item">
+        
+        <!-- Icono de Acción -->
+        <div slot="start" class="log-icon" 
+             [class.create]="log.action === 'create'"
+             [class.delete]="log.action === 'delete'"
+             [class.update]="log.action === 'update'">
+          <ion-icon [name]="log.action === 'create' ? 'add-circle' : (log.action === 'delete' ? 'trash' : 'create')"></ion-icon>
+        </div>
+
+        <ion-label>
+          <div class="log-top">
+            <h3 class="product-name">{{ log.productName }}</h3>
+            <span class="log-date">{{ log.date | date:'dd/MM HH:mm' }}</span>
+          </div>
+          <p class="log-detail">{{ log.detail }}</p>
+        </ion-label>
+
+      </ion-item>
+
+    </ion-list>
+
+  </div>
+
+</ion-content>

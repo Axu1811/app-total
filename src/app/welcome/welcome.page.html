@@ -1,0 +1,49 @@
+<ion-content>
+  <div class="welcome-layout">
+    
+    <!-- Luces de fondo -->
+    <div class="deco-circle deco-1"></div>
+    <div class="deco-circle deco-2"></div>
+
+    <!-- LOGO ANIMADO -->
+    <div class="brand-section animate__animated animate__fadeIn">
+      <div class="icon-wrapper">
+        <ion-icon name="hammer" class="main-icon"></ion-icon>
+      </div>
+      
+      <div class="brand-title">
+        <h1>TOTAL<br><span>TOOLS</span></h1>
+        <p>EQUIPAMIENTO PROFESIONAL</p>
+      </div>
+    </div>
+
+    <!-- BOTONES "NEGRITOS" -->
+    <div class="actions-container animate__animated animate__fadeInUp animate__delay-1s">
+      <span class="action-label">Selecciona tu perfil</span>
+
+      <!-- Botón Cliente (Negro con Cian) -->
+      <ion-button expand="block" class="custom-btn btn-primary" routerLink="/catalogo">
+        <ion-icon name="storefront-outline" slot="start"></ion-icon>
+        <div class="btn-text">
+          CATÁLOGO DIGITAL
+          <small>Cotizar herramientas</small>
+        </div>
+        <ion-icon name="arrow-forward-circle-outline" slot="end" style="font-size: 24px; color: #00a8cc; opacity: 1;"></ion-icon>
+      </ion-button>
+
+      <!-- Botón Admin -->
+      <ion-button expand="block" class="custom-btn btn-secondary" routerLink="/home">
+        <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+        <div class="btn-text">
+          ADMINISTRADOR
+          <small>Acceso al sistema</small>
+        </div>
+      </ion-button>
+
+      <div class="footer-info">
+        <p>Total Tools App v3.0</p>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

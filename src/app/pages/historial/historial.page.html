@@ -1,0 +1,41 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button routerLink="/welcome">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Movimientos de Stock</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="header-info">
+    <ion-icon name="time-outline"></ion-icon>
+    <p>Últimos 50 movimientos registrados</p>
+  </div>
+
+  <ion-list lines="full">
+    <ion-item *ngFor="let log of logs">
+      <ion-icon 
+        [name]="log.detail.includes('SALIDA') ? 'alert-circle-outline' : 'cube-outline'" 
+        [color]="getBadgeColor(log.detail)" 
+        slot="start">
+      </ion-icon>
+      
+      <ion-label>
+        <h3>{{ log.productName }}</h3>
+        <p>{{ log.detail }}</p>
+        <small class="ion-text-uppercase">{{ log.date | date:'short' }}</small>
+      </ion-label>
+
+      <ion-badge [color]="getBadgeColor(log.detail)" slot="end">
+        {{ log.detail.split(':')[0] }}
+      </ion-badge>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="logs.length === 0" class="ion-text-center ion-padding">
+    <p>Aún no hay movimientos registrados.</p>
+  </div>
+</ion-content>
