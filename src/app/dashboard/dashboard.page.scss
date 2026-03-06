@@ -1,4 +1,4 @@
-/* COLORES */
+/* COLORES BASE */
 $cyan: #00a8cc;
 $dark: #202020;
 $gray-bg: #f0f2f5;
@@ -8,7 +8,7 @@ $blue: #1e90ff;
 
 .bg-dashboard { 
   --background: #{$gray-bg}; 
-  --padding-bottom: 120px; // Espacio global para el footer fijo
+  --padding-bottom: 120px; 
 }
 
 .main-container { 
@@ -81,56 +81,85 @@ ion-title {
   background: $dark; color: white; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 
-/* --- INVENTARIO Y SCROLL (SOLUCIÓN A LA FUERZA) --- */
-.inventory-section {
-  display: flex; flex-direction: column;
-  max-height: 70vh; // Evita que la lista empuje los botones
-  overflow: hidden; 
+/* --- INVENTARIO --- */
+.inventory-header-row {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
+  .title-container {
+    display: flex; align-items: center; gap: 10px;
+    h2 { margin: 0; font-size: 1.2rem; font-weight: 800; color: $dark; }
+    .count-badge { background: rgba($cyan, 0.1); color: $cyan; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; }
+  }
 }
 
-.inventory-list {
-  flex: 1;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 50px; // Espacio interno para el último item
-  display: flex; flex-direction: column; gap: 10px;
+.search-wrapper {
+  background: white; border-radius: 10px; padding: 0 10px; display: flex; align-items: center; gap: 8px; 
+  height: 38px; border: 1px solid #eee; flex: 1; max-width: 200px;
+  input { border: none; outline: none; width: 100%; font-size: 13px; }
+  ion-icon { color: #999; }
+}
 
-  &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+.inventory-scroll-area {
+  display: flex; flex-direction: column; gap: 12px;
+  overflow-y: auto; max-height: 60vh; padding-bottom: 100px;
 }
 
 .inventory-item {
-  background: white; border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 10px; 
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-  &.editing-item { border: 1px solid $cyan; background: rgba($cyan, 0.02); transform: scale(1.01); }
-}
+  background: white; border-radius: 16px; padding: 12px; display: flex; align-items: center; gap: 12px; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04); position: relative; transition: 0.3s ease;
+  &.editing-item { border: 2px solid $cyan; background: #fafcfe; transform: scale(1.02); z-index: 10; }
 
-.item-img {
-  width: 45px; height: 45px; border-radius: 8px; overflow: hidden; border: 1px solid #eee;
-  img { width: 100%; height: 100%; object-fit: contain; }
-}
-
-/* --- FOOTER FIJO (SIEMPRE VISIBLE) --- */
-.cart-footer-mobile {
-  position: fixed !important;
-  bottom: 0 !important; left: 0; right: 0;
-  width: 100%; background: white !important;
-  display: flex !important; gap: 10px; padding: 15px;
-  padding-bottom: calc(15px + env(safe-area-inset-bottom)) !important;
-  box-shadow: 0 -8px 20px rgba(0,0,0,0.15);
-  z-index: 99999 !important;
-  border-top: 1px solid #eee;
-
-  ion-button {
-    margin: 0; height: 50px; font-weight: 800;
-    --border-radius: 10px;
+  .item-img-wrapper {
+    width: 65px; height: 65px; border-radius: 12px; overflow: hidden; position: relative; background: #fdfdfd; border: 1px solid #f0f0f0;
+    img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+    .img-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;
+    }
   }
 
-  .btn-pdf { flex: 1; --background: #6c757d !important; }
-  .btn-finalizar { flex: 2; --background: #{$cyan} !important; }
+  .item-info {
+    flex: 1;
+    .info-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .code-badge { font-size: 9px; font-weight: 700; color: #888; text-transform: uppercase; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
+    .price-text { font-weight: 800; color: $dark; font-size: 14px; }
+    .name-text { margin: 0 0 5px 0; font-size: 13px; font-weight: 600; color: #444; line-height: 1.2; }
+    .location-row { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #999; ion-icon { color: $cyan; } }
+  }
+
+  .item-actions {
+    display: flex; flex-direction: column; align-items: center; gap: 8px; border-left: 1px solid #f0f0f0; padding-left: 12px;
+    
+    .stock-manager {
+      display: flex; align-items: center; background: #f8f9fa; border-radius: 8px; padding: 2px;
+      .mini-btn { width: 24px; height: 24px; border: none; background: white; border-radius: 6px; font-weight: bold; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+      .stock-number { width: 35px; border: none; background: transparent; text-align: center; font-weight: 800; font-size: 14px; }
+      .stock-number.low-stock { color: $red; }
+    }
+
+    .action-buttons {
+      display: flex; gap: 8px;
+      .btn-icon {
+        background: transparent; border: none; font-size: 18px; padding: 4px; border-radius: 6px;
+        &.edit { color: $cyan; }
+        &.delete { color: $red; }
+        &.save { color: $green; font-size: 22px; }
+        &.cancel { color: #999; font-size: 22px; }
+        &:active { background: #f0f0f0; }
+      }
+    }
+  }
 }
 
-/* --- PANEL BLOQUEADO --- */
+/* EDICIÓN DE UBICACIÓN */
+.edit-location-box {
+  display: flex; gap: 8px; margin-top: 5px;
+  .edit-input-group {
+    display: flex; flex-direction: column;
+    label { font-size: 8px; font-weight: 700; color: #bbb; text-transform: uppercase; }
+    input { width: 45px; border: 1px solid #ddd; border-radius: 4px; font-size: 10px; padding: 2px 4px; outline: none; &:focus { border-color: $cyan; } }
+  }
+}
+
+/* PANEL BLOQUEADO */
 .locked-container {
   display: flex; justify-content: center; align-items: center; min-height: 70vh;
   .glass-card {
@@ -143,6 +172,7 @@ ion-title {
 
 /* RESPONSIVE */
 @media (max-width: 480px) {
-  .inventory-section { max-height: 60vh; }
-  .cart-footer-mobile ion-button { font-size: 12px; height: 45px; }
+  .inventory-scroll-area { max-height: 50vh; }
+  .item-actions { width: 100px; padding-left: 8px; }
+  .item-img-wrapper { width: 55px; height: 55px; }
 }

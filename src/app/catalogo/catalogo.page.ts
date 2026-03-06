@@ -172,55 +172,107 @@ export class CatalogoPage implements OnInit {
     return `S/. ${precio.toFixed(2)}`;
   }
 
-  // --- EXPORTACIÓN Y VENTA (MODIFICADO) ---
+ // --- EXPORTACIÓN Y VENTA (MODIFICADO PARA FORMATO PROFESIONAL) ---
 
   async generarPDF() {
     if (this.quoteCart.length === 0) return;
 
     try {
-      const doc = new jsPDF();
-      const fechaActual = new Date().toLocaleDateString();
-      const horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const fechaActual = new Date().toLocaleDateString('es-PE');
+      const horaActual = new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
 
+      // 1. ENCABEZADO SUPERIOR (Información de sistema pequeña)
       doc.setFontSize(8);
-      doc.text(`${fechaActual}, ${horaActual}`, 14, 10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${fechaActual}, ${horaActual}`, 10, 10);
       doc.text('Marketing System', 105, 10, { align: 'center' });
 
+      // 2. TÍTULOS PRINCIPALES
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      doc.text('TOTAL TOOLS PERU', 40, 25);
+      doc.text('TOTAL TOOLS PERU', 10, 25);
+      
+      doc.setFontSize(18);
       doc.text('Venta', 160, 25);
 
+      // 3. DATOS DEL CLIENTE Y PEDIDO (Estructura de dos columnas)
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      doc.text(`Nombre del cliente: ${this.datosCliente.nombre || '---'}`, 14, 35);
-      doc.text(`Número de pedido: QT-${Math.floor(Math.random() * 1000000)}`, 120, 35);
-      doc.text(`Documento: ${this.datosCliente.documento || '---'}`, 14, 42); 
-      doc.text(`Fecha de pedido: ${fechaActual}`, 120, 42);
+      
+      // Columna Izquierda
+      doc.text(`nombre del cliente: ${this.datosCliente.nombre || '---'}`, 10, 35);
+      doc.text(`DNI / RUC: ${this.datosCliente.documento || '---'}`, 10, 40);
+      doc.text(`Observación:`, 10, 45);
 
+      // Columna Derecha
+      const numPedido = 'SOA' + Math.floor(Math.random() * 1000000000).toString();
+      doc.text(`Número de pedido de venta: ${numPedido}`, 115, 35);
+      doc.text(`Fecha de pedido: ${new Date().toISOString().split('T')[0]}`, 115, 40);
+
+      // 4. TABLA DE PRODUCTOS (Configurada con bordes negros y fondo blanco)
       const tableRows = this.quoteCart.map((item, index) => [
         index + 1,
         item.product.code || '---',
-        item.product.name,
-        '', 
+        item.product.name.toUpperCase(),
+        '', // Espacio SC
         item.quantity,
-        '', 
+        '', // Espacio SC
         item.product.price.toFixed(2),
         (item.product.price * item.quantity).toFixed(2)
       ]);
 
       autoTable(doc, {
-        startY: 55,
-        head: [['#', 'Código', 'Producto', 'SC', 'Cant.', 'SC', 'P. Unit', 'Total']],
+        startY: 52,
+        margin: { left: 10, right: 10 },
+        head: [['#', 'Número de Articulo', 'nombre del producto', 'SC', 'Cantidad', 'SC', 'Precio por unidad', 'Total Parcial']],
         body: tableRows,
         theme: 'grid',
-        styles: { fontSize: 7, halign: 'center', cellPadding: 1 },
-        headStyles: { fillColor: [0, 168, 204], textColor: [255, 255, 255] },
-        columnStyles: { 2: { halign: 'left', cellWidth: 60 } }
+        styles: { 
+          fontSize: 7, 
+          halign: 'center', 
+          cellPadding: 1.5, 
+          textColor: [0, 0, 0],
+          lineColor: [0, 0, 0],
+          lineWidth: 0.1 
+        },
+        headStyles: { 
+          fillColor: [255, 255, 255], // Fondo blanco como en el ejemplo
+          textColor: [0, 0, 0], 
+          fontStyle: 'bold',
+          lineWidth: 0.1
+        },
+        columnStyles: { 
+          2: { halign: 'left', cellWidth: 55 } // Producto alineado a la izquierda
+        }
       });
 
-      doc.save(`Cotizacion_${this.datosCliente.nombre || 'Cliente'}.pdf`);
+      // 5. PIE DE PÁGINA (RESUMEN E IMPORTES)
+      const finalY = (doc as any).lastAutoTable.finalY + 8;
+      
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text('(PT)LESS:', 10, finalY);
+      
+      // Cálculo de peso simulado (ejemplo: 2.5kg por item)
+      const pesoTotal = (this.totalItemsInCart * 2.5).toFixed(2);
+      doc.text(`Peso (kg): ${pesoTotal}  Volumen (M³): 0.12`, 10, finalY + 5);
+
+      // Bloque de Totales a la derecha
+      const rightColX = 140;
+      doc.text(`Cantidad total de ventas: ${this.totalQuoteAmount.toFixed(2)}`, rightColX, finalY + 5);
+      doc.text(`Monto de la deducción: 0.00`, rightColX, finalY + 10);
+      doc.text(`Monto con descuento: ${this.totalQuoteAmount.toFixed(2)}`, rightColX, finalY + 15);
+      
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Importe (impuestos incluidos): S/. ${this.totalQuoteAmount.toFixed(2)}`, rightColX, finalY + 22);
+
+      // 6. GUARDAR ARCHIVO
+      doc.save(`Venta_${this.datosCliente.nombre || 'Cliente'}.pdf`);
+      this.mostrarMensaje('PDF generado correctamente', 'success');
+
     } catch (error) {
+      console.error(error);
       this.mostrarMensaje('Error al generar PDF', 'danger');
     }
   }

@@ -42,49 +42,41 @@
         style="width: 100%; height: 100%;">
       </zxing-scanner>
 
-      <div
-        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; height: 2px; background: rgba(0, 168, 204, 0.5); box-shadow: 0 0 8px #00a8cc;">
-      </div>
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; height: 2px; background: rgba(0, 168, 204, 0.5); box-shadow: 0 0 8px #00a8cc;"></div>
 
       <div style="position: absolute; bottom: 5px; width: 100%; display: flex; justify-content: center; z-index: 10;">
-        <ion-button color="danger" size="small" (click)="mostrarCamara = false"
-          style="--border-radius: 20px; height: 25px; font-size: 10px;">
-          <ion-icon name="close-circle" slot="start"></ion-icon>
-          CERRAR
+        <ion-button color="danger" size="small" (click)="mostrarCamara = false" style="--border-radius: 20px; height: 25px; font-size: 10px;">
+          <ion-icon name="close-circle" slot="start"></ion-icon> CERRAR
         </ion-button>
       </div>
     </div>
 
     <div class="stats-row animate__animated animate__fadeInDown">
       <div class="stat-card-mini">
-        <div class="icon-box blue">
-          <ion-icon name="cube-outline"></ion-icon>
-        </div>
+        <div class="icon-box blue"><ion-icon name="cube-outline"></ion-icon></div>
         <div class="text-box">
           <span class="label">Total Artículos</span>
           <span class="value">{{ totalItemsCount }}</span>
         </div>
       </div>
       <div class="stat-card-mini">
-        <div class="icon-box green">
-          <ion-icon name="cash-outline"></ion-icon>
+        <div class="icon-box green"><ion-icon name="cash-outline"></ion-icon></div>
+        <div class="text-box">
+          <span class="label">Valor Stock</span>
+          <span class="value">S/. {{ totalValue | number:'1.2-2' }}</span>
         </div>
-        <div class="text-box"><span class="label">Valor Stock</span><span class="value">S/. {{ totalValue | number:'1.2-2'
-            }}</span></div>
       </div>
       <div class="stat-card-mini" *ngIf="lowStockCount > 0">
-        <div class="icon-box red">
-          <ion-icon name="alert-circle-outline"></ion-icon>
-        </div>
-        <div class="text-box"><span class="label">Bajo Stock</span><span class="value red-text">{{ lowStockCount }}</span>
+        <div class="icon-box red"><ion-icon name="alert-circle-outline"></ion-icon></div>
+        <div class="text-box">
+          <span class="label">Bajo Stock</span>
+          <span class="value red-text">{{ lowStockCount }}</span>
         </div>
       </div>
     </div>
 
     <div class="form-section animate__animated animate__fadeIn">
-      <div class="section-title">
-        <h3>Nuevo Ingreso</h3>
-      </div>
+      <div class="section-title"><h3>Nuevo Ingreso</h3></div>
       <ion-card class="form-card">
         <ion-card-content>
           <div class="input-grid">
@@ -92,11 +84,8 @@
               <label>Código SKU / Barra</label>
               <div class="custom-input-box">
                 <ion-icon name="barcode-outline"></ion-icon>
-                <input [(ngModel)]="code" placeholder="Escanee..." type="text" (keyup.enter)="buscarPorCodigo()"
-                  (focus)="$event.target.select()">
-                <ion-icon name="scan-outline" (click)="escanearConCamara()"
-                  style="font-size: 24px; color: #00a8cc; cursor: pointer; margin-left: 10px;"></ion-icon>
-                <ion-icon *ngIf="code" name="close-circle" class="clear-icon" (click)="code = ''"></ion-icon>
+                <input [(ngModel)]="code" placeholder="Escanee..." type="text" (keyup.enter)="buscarPorCodigo()" (focus)="$event.target.select()">
+                <ion-icon name="scan-outline" (click)="escanearConCamara()" style="color: #00a8cc; cursor: pointer;"></ion-icon>
               </div>
             </div>
             <div class="input-wrapper flex-2">
@@ -104,7 +93,6 @@
               <div class="custom-input-box">
                 <ion-icon name="pricetag-outline"></ion-icon>
                 <input [(ngModel)]="name" placeholder="Nombre" type="text" (focus)="$event.target.select()">
-                <ion-icon *ngIf="name" name="close-circle" class="clear-icon" (click)="name = ''"></ion-icon>
               </div>
             </div>
             <div class="input-wrapper">
@@ -121,12 +109,11 @@
                 <input [(ngModel)]="stock" placeholder="0" type="number" (focus)="$event.target.select()">
               </div>
             </div>
-
             <div class="input-wrapper">
               <label>Estante</label>
               <div class="custom-input-box">
                 <ion-icon name="grid-outline"></ion-icon>
-                <input [(ngModel)]="estante" placeholder="Ej: A1" type="text" (focus)="$event.target.select()">
+                <input [(ngModel)]="estante" placeholder="Ej: A" type="text" (focus)="$event.target.select()">
               </div>
             </div>
             <div class="input-wrapper">
@@ -136,95 +123,79 @@
                 <input [(ngModel)]="fila" placeholder="Ej: 3" type="text" (focus)="$event.target.select()">
               </div>
             </div>
-
             <div class="input-wrapper full-width">
-              <label>Imagen</label>
+              <label>Imagen URL</label>
               <div class="custom-input-box">
                 <ion-icon name="image-outline"></ion-icon>
-                <input [(ngModel)]="image" placeholder="URL..." type="text" (focus)="$event.target.select()">
-                <ion-icon *ngIf="image" name="close-circle" class="clear-icon" (click)="image = ''"></ion-icon>
+                <input [(ngModel)]="image" placeholder="https://..." type="text" (focus)="$event.target.select()">
               </div>
             </div>
           </div>
           <button class="action-btn save" (click)="saveProduct()">
-            <ion-icon name="add-circle"></ion-icon> REGISTRAR
+            <ion-icon name="add-circle"></ion-icon> REGISTRAR PRODUCTO
           </button>
         </ion-card-content>
       </ion-card>
     </div>
 
-    <div class="inventory-section animate__animated animate__fadeInUp" style="display: flex; flex-direction: column; max-height: 80vh;">
+    <div class="inventory-section animate__animated animate__fadeInUp">
       <div class="inventory-header-row">
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="title-container">
           <h2>Inventario</h2>
-          <ion-button *ngIf="esAdministrador" fill="clear" color="danger" (click)="borrarTodoElCatalogo()"
-            style="--padding-start: 0; --padding-end: 0; width: 30px; height: 30px; margin: 0;">
-            <ion-icon name="trash-outline" style="font-size: 18px; opacity: 0.7;"></ion-icon>
+          <span class="count-badge">{{ displayedInventory.length }} Items</span>
+          <ion-button fill="clear" color="danger" (click)="borrarTodoElCatalogo()">
+            <ion-icon name="trash-outline"></ion-icon>
           </ion-button>
         </div>
 
         <div class="search-wrapper">
           <ion-icon name="search-outline"></ion-icon>
-          <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterInventory()"
-            (focus)="$event.target.select()">
-          <ion-icon *ngIf="searchTerm" name="close-circle" class="clear-icon"
-            (click)="searchTerm = ''; filterInventory()"></ion-icon>
+          <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterInventory()">
         </div>
       </div>
-      <div class="inventory-list" style="overflow-y: auto; flex: 1; padding-bottom: 80px;">
-        <div *ngIf="displayedInventory.length === 0 && fullInventory.length > 0" class="empty-msg">
-          <p>No hay coincidencias</p>
-        </div>
 
+      <div class="inventory-scroll-area">
         <div class="inventory-item" *ngFor="let p of displayedInventory" [class.editing-item]="editId === p.id">
-          
-          <div class="item-img" (click)="editId === p.id ? editImage(p) : null">
+          <div class="item-img-wrapper" (click)="editId === p.id ? editImage(p) : null">
             <img [src]="p.image" (error)="p.image='https://via.placeholder.com/80'">
-            <ion-icon *ngIf="editId === p.id" name="camera-outline" style="position: absolute; color: white; background: rgba(0,0,0,0.4); border-radius: 50%; padding: 4px;"></ion-icon>
+            <div class="img-overlay" *ngIf="editId === p.id">
+              <ion-icon name="camera-outline"></ion-icon>
+            </div>
           </div>
 
           <div class="item-info">
             <div class="info-top">
-              <span class="code">{{ p.code }}</span>
-              <span class="price">S/. {{ p.price }}</span>
+              <span class="code-badge">{{ p.code }}</span>
+              <span class="price-text">S/. {{ p.price | number:'1.2-2' }}</span>
             </div>
-            <h4 class="name">{{ p.name }}</h4>
-            
-            <p *ngIf="editId !== p.id" style="font-size: 10px; color: #666; margin: 0;">Ub: {{ p.estante || 'S/E' }}-{{ p.fila || 'S/F' }}</p>
-            
-            <div *ngIf="editId === p.id" style="display: flex; gap: 4px; margin-top: 4px;">
-              <input [(ngModel)]="p.estante" placeholder="Est" style="width: 40px; font-size: 10px; border: 1px solid #ddd; border-radius: 3px;">
-              <input [(ngModel)]="p.fila" placeholder="Fil" style="width: 40px; font-size: 10px; border: 1px solid #ddd; border-radius: 3px;">
+            <h4 class="name-text">{{ p.name }}</h4>
+            <div class="location-row" *ngIf="editId !== p.id">
+              <ion-icon name="location-outline" style="color: #00a8cc;"></ion-icon>
+              <span>Ubicación: <strong>{{ p.estante || 'S/E' }} - F{{ p.fila || '?' }}</strong></span>
+            </div>
+            <div *ngIf="editId === p.id" class="edit-location-box">
+              <div class="edit-input-group"><label>Est.</label><input [(ngModel)]="p.estante"></div>
+              <div class="edit-input-group"><label>Fila</label><input [(ngModel)]="p.fila"></div>
             </div>
           </div>
 
-          <div class="stock-manager" *ngIf="editId !== p.id">
-            <button class="mini-btn" (click)="adjustStockLocal(p, -1)">-</button>
-            <input type="number" [value]="p.stock" (change)="updateStock(p, $event)" (focus)="$event.target.select()"
-              class="stock-number" [class.low-stock]="p.stock < 5">
-            <button class="mini-btn plus" (click)="adjustStockLocal(p, 1)">+</button>
+          <div class="item-actions">
+            <div class="stock-manager" *ngIf="editId !== p.id">
+              <button class="mini-btn" (click)="adjustStockLocal(p, -1)">-</button>
+              <input type="number" [value]="p.stock" (change)="updateStock(p, $event)" class="stock-number" [class.low-stock]="p.stock < 5">
+              <button class="mini-btn plus" (click)="adjustStockLocal(p, 1)">+</button>
+            </div>
+            <div class="action-buttons">
+              <ng-container *ngIf="editId !== p.id">
+                <button class="btn-icon edit" (click)="activarEdicion(p)"><ion-icon name="pencil-outline"></ion-icon></button>
+                <button class="btn-icon delete" (click)="confirmDelete(p)"><ion-icon name="trash-outline"></ion-icon></button>
+              </ng-container>
+              <ng-container *ngIf="editId === p.id">
+                <button class="btn-icon save" (click)="guardarCambiosRapidos(p)"><ion-icon name="checkmark-circle"></ion-icon></button>
+                <button class="btn-icon cancel" (click)="cancelarEdicion()"><ion-icon name="close-circle"></ion-icon></button>
+              </ng-container>
+            </div>
           </div>
-
-          <div style="display: flex; flex-direction: column; gap: 4px;">
-            <ng-container *ngIf="editId !== p.id">
-              <ion-button fill="clear" (click)="activarEdicion(p)" style="height: 25px; margin: 0; --padding-start: 0; --padding-end: 0;">
-                <ion-icon name="pencil-outline" slot="icon-only" style="font-size: 16px; color: #00a8cc;"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" (click)="confirmDelete(p)" style="height: 25px; margin: 0; --padding-start: 0; --padding-end: 0;">
-                <ion-icon name="trash-outline" slot="icon-only" style="font-size: 16px; color: #ff4757;"></ion-icon>
-              </ion-button>
-            </ng-container>
-
-            <ng-container *ngIf="editId === p.id">
-              <ion-button fill="clear" (click)="guardarCambiosRapidos(p)" style="height: 25px; margin: 0; --padding-start: 0; --padding-end: 0;">
-                <ion-icon name="checkmark-circle-outline" slot="icon-only" style="font-size: 20px; color: #2ed573;"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" (click)="cancelarEdicion()" style="height: 25px; margin: 0; --padding-start: 0; --padding-end: 0;">
-                <ion-icon name="close-circle-outline" slot="icon-only" style="font-size: 20px; color: #999;"></ion-icon>
-              </ion-button>
-            </ng-container>
-          </div>
-
         </div>
       </div>
     </div>
@@ -233,22 +204,10 @@
   <ng-template #bloqueado>
     <div class="locked-container animate__animated animate__fadeIn">
       <div class="glass-card">
-        <div class="lock-wrapper">
-          <ion-icon name="lock-closed-outline" class="main-lock"></ion-icon>
-          <div class="scan-line"></div>
-        </div>
-
-        <div class="text-content">
-          <h2 class="title">Acceso <span>Restringido</span></h2>
-          <div class="divider"></div>
-          <p class="description">
-            El panel administrativo de <strong>TotalTools</strong> se encuentra bloqueado por seguridad.
-          </p>
-          <p class="instruction">
-            Por favor, utilice el candado superior para autenticarse.
-          </p>
-        </div>
-
+        <ion-icon name="lock-closed-outline" class="main-lock"></ion-icon>
+        <h2 class="title">Acceso <span>Restringido</span></h2>
+        <div class="divider"></div>
+        <p>Inicie sesión con la clave de administrador para gestionar el inventario de <strong>TotalTools</strong>.</p>
         <div class="footer-brand">
           <ion-icon name="shield-checkmark-outline"></ion-icon>
           <span>SISTEMA DE GESTIÓN SEGURA</span>
@@ -256,4 +215,5 @@
       </div>
     </div>
   </ng-template>
+
 </ion-content>
